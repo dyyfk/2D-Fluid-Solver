@@ -36,6 +36,9 @@ FluidSolver::~FluidSolver()
 
 void FluidSolver::reset()
 {
+  // std::cout << Cell::FLUID;
+
+
   // Note: This is super ghetto currently, and simply initializes the solver
   // with a large default grid, all filled with fluid and arbitrary velocities.
   // Change this as needed during devlopment to quickly test stuff out, and
@@ -69,7 +72,7 @@ void FluidSolver::reset()
 
 void FluidSolver::advanceFrame()
 {
-  float frameTimeSec = 1.0f/30.0f; // TODO Target 30 Hz framerate for now.
+  float frameTimeSec = 1.0f/144.0f; // TODO Target 30 Hz framerate for now.
   float CFLCoefficient = 2.0f;     // TODO CFL coefficient set to 2 for now.
 
   while (!_frameReady) {
@@ -139,7 +142,7 @@ Vector2 FluidSolver::particleTrace(Vector2 position, float timeStepSec)
   Vector2 tempPos;
   float width = _grid.getWidth();
   float height = _grid.getHeight();
-  float dist;
+  float dist = 0;
   float interceptX, interceptY = 0; 
   bool intersectX = toPosition.x < 0 || toPosition.x > _grid.getWidth(); 
   bool intersectY = toPosition.y < 0 || toPosition.y > _grid.getHeight(); 
@@ -214,6 +217,16 @@ void FluidSolver::moveParticles(float timeStepSec)
                                  ++itr)
   {
     *itr += _grid.getVelocity(*itr) * timeStepSec;
+
+    // if(itr->y <= 0.5){
+    //   itr->y = getSimulationHeight() - 0.5;
+    // }
+    // if(itr->x <= 0.5){
+    //   itr->x = getSimulationWidth() - 0.5;
+    // }
+    // if(itr->x >=  0.5)
+
+
   }
 }
 
