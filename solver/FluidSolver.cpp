@@ -52,7 +52,7 @@ void FluidSolver::reset()
   //  divergent within a cell.
   // Note: sin() is used to clamp output values to [-1, 1].
   Grid grid(_width, _height);
-  for (float y = 0; y < _height; ++y) 
+  for (float y = 0; y < _height; ++y) { 
     for (float x = 0; x < _width; ++x) {
       grid(x,y).cellType = Cell::FLUID;
       grid(x,y).pressure = 1.0f;
@@ -60,9 +60,12 @@ void FluidSolver::reset()
       grid(x,y).vel[Cell::Y] = sin(x * 2.548 + y * 121.1215) / 2;  // arbitrary constants
 
       // Initialize particle positions
-      for (unsigned i = 0; i < 4; i++)
-        for(unsigned j = 0; j < 4; j++) 
-        _particles.push_back(Vector2(x + 0.20f * (i + 1), y + 0.20f * (j + 1)));
+      for (unsigned i = 0; i < 4; i++) {
+        for(unsigned j = 0; j < 4; j++) { 
+          _particles.push_back(Vector2(x + 0.20f * (i + 1), y + 0.20f * (j + 1)));
+        }
+      }
+    }
   }
 
   // Set values accordingly.
@@ -72,7 +75,7 @@ void FluidSolver::reset()
 
 void FluidSolver::advanceFrame()
 {
-  float frameTimeSec = 1.0f/144.0f; // TODO Target 30 Hz framerate for now.
+  float frameTimeSec = 1.0f/30.0f; // TODO Target 30 Hz framerate for now.
   float CFLCoefficient = 2.0f;     // TODO CFL coefficient set to 2 for now.
 
   while (!_frameReady) {
@@ -102,12 +105,12 @@ void FluidSolver::advanceFrame()
 
 void FluidSolver::advanceTimeStep(float timeStepSec)
 {
-  Vector2 gravity(0.0f, -0.098f);  // Gravity: -0.098 cells/sec^2
+  Vector2 gravity(-0.04f, -0.098f);  // Gravity: -0.098 cells/sec^2
 
   advectVelocity(timeStepSec);
   applyGlobalVelocity(gravity * timeStepSec);
   boundaryCollide();
-  pressureSolve();
+  // pressureSolve();
   moveParticles(timeStepSec);
 }
 
@@ -218,12 +221,12 @@ void FluidSolver::moveParticles(float timeStepSec)
   {
     *itr += _grid.getVelocity(*itr) * timeStepSec;
 
-    // if(itr->y <= 0.5){
-    //   itr->y = getSimulationHeight() - 0.5;
-    // }
-    // if(itr->x <= 0.5){
-    //   itr->x = getSimulationWidth() - 0.5;
-    // }
+    if(itr->y <= 0.5){
+      itr->y = getSimulationHeight() - 0.5;
+    }
+    if(itr->x <= 0.5){
+      itr->x = getSimulationWidth() - 0.5;
+    }
     // if(itr->x >=  0.5)
 
 
